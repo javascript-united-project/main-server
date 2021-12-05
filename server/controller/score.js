@@ -42,16 +42,21 @@ const patchMyQuizScoreWithRank = async (req, res) => {
     if (!sheet[chapterId] || !sheet[chapterId].length)
       throw new Error("invalid data");
 
-    const user = await patchQuizRecord(username, chapterId, sheet);
+    const [_, user] = await scoreService.patchQuizRecord(username, chapterId, sheet);
 
-    const totalPercentage = getScorePercentage(user);
-
+    const totalPercentage = scoreService.getScorePercentage(user.dataValues);
+    const [result] = await scoreService.patchSubjectRank(
+      name,
+      chapterId.substring(0, 2),
+      totalPercentage
+    );
     res.json({
-      message: `${result.subjectId} / ${chapterId} is updated`,
-      data: await patchSubjectRank(name, totalPercentage)
+      message: `${result.dataValues.subjectId} / ${chapterId} is updated`,
+      data: result.dataValues
     });
   } catch (err) {
     logger.error(err.message);
+    console.log(err);
     res.status(400).json({ message: err.message });
   }
 };

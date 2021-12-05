@@ -6,7 +6,7 @@ const register = async (req, res) => {
     const { username, password, name } = req.body;
     const user = await authService.register(username, password, name);
 
-    req.session.user = user;
+    req.session.user = user.dataValues;
     res.sendStatus(201);
   } catch (err) {
     logger.error(err.message);
@@ -18,8 +18,8 @@ const login = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await authService.login(username, password);
-
-    req.session.user = user;
+    
+    req.session.user = user.dataValues;
     logger.info(`${user.username} 로그인`);
     res.status(200).json({ name: user.name });
   } catch (err) {

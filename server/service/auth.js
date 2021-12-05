@@ -1,6 +1,6 @@
 const { hash, compare } = require("bcryptjs");
 
-const User = require("../models/User");
+const User = require("../models/UserV2");
 
 const register = async (username, password, name) => {
   try {
@@ -9,12 +9,16 @@ const register = async (username, password, name) => {
     if (username.length < 3)
       throw new Error("username은 3자 이상으로 해주세요.");
 
+    const user = await User.findOne({ where: { username } });
+    if (user)
+      throw new Error("이미 등록된 사용자 아이디입니다.");
+
     const hashedPassword = await hash(password, 10);
-    return await new User({
+    return await User.create({
       name,
       username,
       hashedPassword
-    }).save();
+    });
   } catch (err) {
     return Promise.reject(err.message);
   }
@@ -22,12 +26,14 @@ const register = async (username, password, name) => {
 
 const login = async (username, password) => {
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ where: { username } });
     if (!user)
       throw new Error("가입되지 않은 아이디입니다.");
+
     const isValid = await compare(password, user.hashedPassword);
     if (!isValid)
       throw new Error("입력하신 정보가 올바르지 않습니다.");
+
     return user;
   } catch (err) {
     return Promise.reject(err.message);

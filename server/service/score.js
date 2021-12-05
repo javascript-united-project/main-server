@@ -1,13 +1,14 @@
-const User = require('../models/User');
-const Rank = require("../models/Rank");
+const { Op } = require("sequelize");
+
+const User = require('../models/UserV2');
+const Rank = require("../models/RankV2");
 
 const { SUBJECT_CODE_RECORDS } = require("../utils/vo");
 const DefaultDict = require('../utils/collection');
 
 const getRankBySubject = async (subjectId) => {
   try {
-    return await Rank.findOne({ subjectId }
-    );
+    return await Rank.findOne({ where: { subjectId } });
   } catch (err) {
     return Promise.reject(err.message);
   }
@@ -15,8 +16,8 @@ const getRankBySubject = async (subjectId) => {
 
 const getQuizRecordByChapter = async (chapterId) => {
   try {
-    return await User.find({
-      [`quizRecord.${chapterId}`]: { "$exists": true }
+    return await User.findAll({
+      attributes: [`quizRecord.${chapterId}`]
     });
   } catch (err) {
     return Promise.reject(err.message);
@@ -25,38 +26,33 @@ const getQuizRecordByChapter = async (chapterId) => {
 
 const patchQuizRecord = async (username, chapterId, sheet) => {
   try {
-    return await User.findOneAndUpdate(
-      { username },
+    return await User.update(
+      { [`quizRecord.${chapterId}`]: sheet[chapterId] },
       {
-        '$set': {
-          [`quizRecord.${chapterId}`]: sheet[chapterId]
-        }
-      },
-      { new: true }
-    );
+        where: { username },
+        returning: true,
+        plain: true
+      });
   } catch (err) {
     return Promise.reject(err.message);
   }
 }
 
-const patchSubjectRank = async (name, totalPercentage) => {
+const patchSubjectRank = async (name, subjectId, totalPercentage) => {
   try {
-    return await Rank.findOneAndUpdate(
+    return await Rank.upsert(
       {
-        'subjectId': chapterId.substring(0, 2),
-        ranks: { '$elemMatch': { name } },
+        ['ranks.name']: name,
+        ['ranks.correctAnswerRate']: totalPercentage
       },
       {
-        '$set': {
-          'ranks.$.name': name,
-          'ranks.$.correctAnswerRate': totalPercentage
-        }
-      },
-      {
-        upsert: true,
-        new: true,
-      }
-    );
+        where:
+        {
+          [Op.and]: [{ subjectId }, { ['ranks.name']: name }]
+        },
+        returning: true,
+        plain: true
+      });
   } catch (err) {
     return Promise.reject(err.message);
   }
