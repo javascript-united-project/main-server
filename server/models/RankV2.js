@@ -5,11 +5,10 @@ module.exports = class Rank extends Sequelize.Model {
     return super.init({
       subjectId: {
         type: Sequelize.STRING(20),
-        allowNull: true,
-        uniqueKey: true
+        allowNull: false      
       },
       ranks: {
-        type: Sequelize.DataTypes.JSONB,
+        type: Sequelize.JSONB,
         allowNull: true
       }
     }, {

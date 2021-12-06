@@ -1,14 +1,22 @@
-const { Op } = require("sequelize");
+const { Op, fn, col, where, literal } = require("sequelize");
 
 const User = require('../models/UserV2');
 const Rank = require("../models/RankV2");
 
+const OPTION_QUERY = { returning: true, plain: true };
 const { SUBJECT_CODE_RECORDS } = require("../utils/vo");
 const DefaultDict = require('../utils/collection');
 
 const getRankBySubject = async (subjectId) => {
   try {
-    return await Rank.findOne({ where: { subjectId } });
+    const ranks = await Rank.findAll({
+      where: { subjectId },
+      order: [
+        ['ranks.correctAnswerRate', 'DESC']
+      ],
+      limit: 3
+    });
+    return ranks.map(each => each.dataValues);
   } catch (err) {
     return Promise.reject(err.message);
   }
@@ -17,22 +25,31 @@ const getRankBySubject = async (subjectId) => {
 const getQuizRecordByChapter = async (chapterId) => {
   try {
     return await User.findAll({
-      attributes: [`quizRecord.${chapterId}`]
+      // ++ Do it function name 
+      // where: { [`quizRecord.${chapterId}`]: { 
+      //   [Op.col]: `quizRecord.${chapterId}` }
+      // },
+      attributes: ['quizRecord']
     });
   } catch (err) {
     return Promise.reject(err.message);
   }
 };
 
-const patchQuizRecord = async (username, chapterId, sheet) => {
+const patchQuizRecord = async (username, chapterId, chapterSheet) => {
   try {
-    return await User.update(
-      { [`quizRecord.${chapterId}`]: sheet[chapterId] },
-      {
-        where: { username },
-        returning: true,
-        plain: true
-      });
+    const user = await User.findOne({
+      where: { username },
+      ...OPTION_QUERY
+    });
+    user.dataValues.quizRecord[`${chapterId}`] = chapterSheet;
+
+    return await User.update({
+      quizRecord: user.dataValues.quizRecord
+    }, {
+      where: { username },
+      ...OPTION_QUERY
+    });
   } catch (err) {
     return Promise.reject(err.message);
   }
@@ -40,19 +57,29 @@ const patchQuizRecord = async (username, chapterId, sheet) => {
 
 const patchSubjectRank = async (name, subjectId, totalPercentage) => {
   try {
-    return await Rank.upsert(
-      {
-        ['ranks.name']: name,
-        ['ranks.correctAnswerRate']: totalPercentage
-      },
-      {
-        where:
-        {
-          [Op.and]: [{ subjectId }, { ['ranks.name']: name }]
-        },
-        returning: true,
-        plain: true
+    const findableQuery = { [Op.and]: [{ subjectId }, { ['ranks.name']: name }] };
+
+    const updatableQuery = {
+      subjectId,
+      ['ranks.name']: name,
+      ['ranks.correctAnswerRate']: totalPercentage
+    };
+
+    const updateOrCreate = async _ => {
+      const target = await Rank.findOne({
+        where: findableQuery
       });
+      if (!target)
+        return await Rank.create(updatableQuery,
+          { ...OPTION_QUERY });
+
+      return await Rank.update(updatableQuery,
+        {
+          where: findableQuery,
+          ...OPTION_QUERY
+        });
+    }
+    return await updateOrCreate();
   } catch (err) {
     return Promise.reject(err.message);
   }

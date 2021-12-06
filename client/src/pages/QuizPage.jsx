@@ -155,7 +155,7 @@ const QuizPage = memo((_) => {
     );
 
     await axios({
-      url: `/raw/me/${chapterId}`,
+      url: `/score/raw/me/${chapterId}`,
       method: "patch",
       data: makeSubmitableSheet(Object.values(quizTable)),
     })

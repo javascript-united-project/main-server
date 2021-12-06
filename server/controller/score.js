@@ -3,12 +3,12 @@ const logger = require('../log');
 
 // +++ aggregate
 const getRankBySubject = async (req, res) => {
-  const getTop3 = (allRank) => allRank.ranks.slice(0, 3);
+  const getTop3 = (allRank) => allRank.map(rank => rank.ranks);
 
   try {
     const { subjectId } = req.params;
 
-    const allRank = await scoreService.getRankBySubject(subjectId);
+    const allRank = await scoreService.getRankBySubject(subjectId);    
     res.json({
       data: getTop3(allRank)
     });
@@ -42,10 +42,13 @@ const patchMyQuizScoreWithRank = async (req, res) => {
     if (!sheet[chapterId] || !sheet[chapterId].length)
       throw new Error("invalid data");
 
-    const [_, user] = await scoreService.patchQuizRecord(username, chapterId, sheet);
-
+    const [, user] = await scoreService.patchQuizRecord(
+      username, 
+      chapterId, 
+      sheet[chapterId]
+    );
     const totalPercentage = scoreService.getScorePercentage(user.dataValues);
-    const [result] = await scoreService.patchSubjectRank(
+    const [, result] = await scoreService.patchSubjectRank(
       name,
       chapterId.substring(0, 2),
       totalPercentage
