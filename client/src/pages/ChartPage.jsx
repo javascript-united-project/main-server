@@ -14,9 +14,8 @@ const ChartPage = (_) => {
 
   useMemo(
     (_) => {
-      axios.get(`/score/raw/all/${chapterId}`).then(({ data }) => {
-        const iterate = data.data;
-        const records = iterate.map((each) => each.quizRecord[`${chapterId}`]);
+      axios.get(`/score/raw/all/${chapterId}`).then(({ data }) => {        
+        const records = data.data.map((each) => each.quizRecord[`${chapterId}`]);
         const dataPoints = Object.values(countQuizRecords(records)).map(
           (point, index) => ({ label: index + 1, y: point })
         );

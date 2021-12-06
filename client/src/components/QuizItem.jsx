@@ -8,10 +8,10 @@ import "./QuizList.css";
 import "../styles/style.css";
 import { ProceedType, EndType } from "../utils/type";
 
-const checkProgress = (record, chapterId, action) =>
-  record && record[chapterId] && record[chapterId].some((each) => each === null)
+const checkProgress = (iterate, action) =>
+  iterate.some((each) => each === null)
     ? new ProceedType()[action]
-    : record && Object.keys(record).includes(chapterId)
+    : iterate
     ? new EndType()[action]
     : "";
 
@@ -21,15 +21,19 @@ const QuizItem = ({ chapterId }) => {
   return (
     <Grid className="item-grid">
       <Tooltip
-        title={checkProgress(record, chapterId, "toString")}
+        title={
+          record && record[chapterId]
+            ? checkProgress(record[chapterId], "toString")
+            : ""
+        }
         followCursor
       >
         <Paper
-          className={`item-paper ${checkProgress(
-            record,
-            chapterId,
-            "cssClassName"
-          )}`}
+          className={
+            record && record[chapterId]
+              ? `item-paper ${checkProgress(record[chapterId], "cssClassName")}`
+              : "item-paper"
+          }
         >
           <Link to={`/quiz/${chapterId}`}>챕터{chapterId.split("_")[1]}</Link>
         </Paper>
