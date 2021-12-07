@@ -54,9 +54,11 @@ const patchMyQuizScoreWithRank = async (req, res) => {
       name,
       chapterId.substring(0, 2),
       totalPercentage
-    );
-    const result = ranks.filter(each => each instanceof Rank)[0] || ranks;
-
+    );    
+    const result = ranks.length 
+      ? ranks.filter(each => each instanceof Rank)[0]
+      : ranks;
+    
     req.session.user.quizRecord = user.dataValues.quizRecord;
     res.json({
       message: `${result.dataValues.subjectId} / ${chapterId} is updated`,

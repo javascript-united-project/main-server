@@ -1,6 +1,7 @@
 {
-  "name": "programs",
+  "name": "kbu-quiz-server",
   "version": "1.0.0",
+  "description": "201504009 / 201704036",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -8,7 +9,6 @@
   },
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "axios": "^0.21.1",
     "babel-eslint": "^10.1.0",

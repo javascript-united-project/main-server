@@ -8,7 +8,7 @@ import { RecordContext } from "../context/RecordContext";
 import chatImg from "../image/ul-comment-message.png";
 import rankImg from "../image/ranking.png";
 import "./QuizList.css";
-import { chatServerDomain } from "../../package.json";
+import { chatAppDomain as CHAT_APP_DOMAIN } from "../../package.json";
 import { SUBJECT_CODE_RECORDS } from "../utils/quiz";
 import QuizItem from "./QuizItem";
 
@@ -72,7 +72,7 @@ const QuizList = ({ quizInfo }) => {
         </Modal>
 
         <a
-          href={`${chatServerDomain}/?name=${name}&room=${
+          href={`${CHAT_APP_DOMAIN}/?name=${name}&room=${
             SUBJECT_CODE_RECORDS[quizInfo.key]
           }`}
           target="_blank"

@@ -1,6 +1,7 @@
 {
-  "name": "client",
+  "name": "kbu-quiz-client",
   "version": "0.1.0",
+  "description": "201504009 / 201704036",
   "private": true,
   "dependencies": {
     "@mui/icons-material": "^5.0.4",
@@ -42,5 +43,5 @@
     ]
   },
   "proxy": "http://localhost:5000",
-  "chatServerDomain": "http://localhost:3001"
+  "chatAppDomain": "http://localhost:3001"
 }
