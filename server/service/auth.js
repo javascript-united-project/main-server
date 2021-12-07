@@ -1,6 +1,6 @@
 const { hash, compare } = require("bcryptjs");
 
-const User = require("../models/UserV2");
+const User = require("../models/User");
 
 const register = async (username, password, name) => {
   try {

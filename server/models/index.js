@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
-const User = require('./UserV2');
-const Rank = require('./RankV2');
+const User = require('./User');
+const Rank = require('./Rank');
 
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];

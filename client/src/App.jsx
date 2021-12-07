@@ -17,11 +17,11 @@ const theme = createTheme();
 const App = () => {
   return (
     <div className="layout">
-      <CustomToolBar />
       <ThemeProvider theme={theme}>
+        <CustomToolBar />
         <Switch>
-          <Route path="/quiz/:chapterId" exact component={QuizPage} />
           <Route path="/quiz/chart/:chapterId" exact component={ChartPage} />
+          <Route path="/quiz/:chapterId" exact component={QuizPage} />
           <Route path="/auth/register" exact component={RegisterPage} />
           <Route path="/auth/login" exact component={LoginPage} />
           <Route path="/mypage/score" component={MyScorePage} />

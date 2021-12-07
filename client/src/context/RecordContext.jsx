@@ -10,7 +10,7 @@ export const RecordProvider = ({ children }) => {
   axios.defaults.headers.common["Content-Type"] = "application/json";
   useEffect(() => {
     axios
-      .get("/score/raw/me", { withCredentials: true })
+      .get("/score/raw/me")
       .then(({ data }) => {
         setName(data.name);
         setRecord(data.quizRecord);

@@ -14,9 +14,11 @@ const ChartPage = (_) => {
 
   useMemo(
     (_) => {
-      axios.get(`/score/raw/all/${chapterId}`).then(({ data }) => {        
-        const records = data.data.map((each) => each.quizRecord[`${chapterId}`]);
-        const dataPoints = Object.values(countQuizRecords(records)).map(
+      axios.get(`/score/raw/all/${chapterId}`).then(({ data }) => {                          
+        if(!data.data)
+          return <h3>기록이 존재하지 않습니다.</h3>;
+
+        const dataPoints = Object.values(countQuizRecords(data.data)).map(
           (point, index) => ({ label: index + 1, y: point })
         );
         setDataPoints(dataPoints);

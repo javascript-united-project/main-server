@@ -17,7 +17,6 @@ app.use(
 	require('./middleware/morgan'),
 	express.json(),
 	express.urlencoded({ extended: false }),
-	require('./middleware/cors'),
 	require('./middleware/session')
 );
 app.use('/user', require('./routes/user'));

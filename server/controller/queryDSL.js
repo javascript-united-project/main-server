@@ -55,7 +55,10 @@ const getChapter = async (req, res) => {
           "bool": {
             "must_not": [
               {
-                "match": { "subject_category": "subject_category" }
+                "match": { 
+                  "subject_category": "subject_category",
+                  "subject_category": "Not Defined"
+                }
               }
             ]
           }

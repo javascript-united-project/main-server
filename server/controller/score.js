@@ -1,4 +1,4 @@
-const Rank = require("../models/RankV2");
+const Rank = require("../models/Rank");
 
 const scoreService = require("../service/score");
 const logger = require('../log');
@@ -60,7 +60,7 @@ const patchMyQuizScoreWithRank = async (req, res) => {
     req.session.user.quizRecord = user.dataValues.quizRecord;
     res.json({
       message: `${result.dataValues.subjectId} / ${chapterId} is updated`,
-      data: result.dataValues      
+      data: result.dataValues
     });
   } catch (err) {
     logger.error(err.message);
@@ -73,9 +73,12 @@ const getQuizScoreByChapter = async (req, res) => {
   try {
     const { chapterId } = req.params;
 
-    res.json({
-      data: await scoreService.getQuizRecordByChapter(chapterId)
-    });
+    const records = await scoreService.getQuizRecordByChapter(chapterId);
+    const data = records.some(each => !each.quizRecord[`${chapterId}`])
+      ? undefined
+      : records.map((each) => each.quizRecord[`${chapterId}`]);
+
+    res.json({ data });
   } catch (err) {
     logger.error(err.message);
     res.status(400).json({ message: err.message });

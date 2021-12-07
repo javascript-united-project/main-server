@@ -1,7 +1,7 @@
 const { Op, fn, col, where, literal } = require("sequelize");
 
-const User = require('../models/UserV2');
-const Rank = require("../models/RankV2");
+const User = require('../models/User');
+const Rank = require("../models/Rank");
 
 const OPTION_QUERY = { returning: true, plain: true };
 const { SUBJECT_CODE_RECORDS } = require("../utils/vo");
@@ -41,9 +41,9 @@ const patchQuizRecord = async (username, chapterId, chapterSheet) => {
     const user = await User.findOne({
       where: { username },
       ...OPTION_QUERY
-    });
+    });        
     user.dataValues.quizRecord[`${chapterId}`] = chapterSheet;
-
+    
     return await User.update({
       quizRecord: user.dataValues.quizRecord
     }, {
@@ -103,7 +103,9 @@ const getScore = (quizRecord) => {
       "chapterId": parseInt(chapterId.match(/[1-9][0-9]*/)),
       "detail": {
         "score": chapterRecord.filter(each => each === true).length + "/" + chapterRecord.length,
-        "state": chapterRecord.some(each => each === null) ? "proceed" : "end"
+        "state":
+          chapterRecord.some(each => each === null)
+            ? "proceed" : "end"
       }
     })
     result[subjectTitle].sort((a, b) =>
