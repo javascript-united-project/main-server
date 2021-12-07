@@ -3,7 +3,8 @@ const axios = require('axios');
 const { SYNONYM_RECORDS } = require("../utils/vo");
 const logger = require('../log');
 
-const SEARCH_URL = process.env.SEARCH_DOMAIN + "/quiz/_search"
+const { SUB_SYSTEM_HOST, ELASTIC_PORT } = process.env;
+const SEARCH_URL = `${SUB_SYSTEM_HOST}:${ELASTIC_PORT}` + "/quiz/_search"
 const HEADER_QUERY = { "Content-Type": "application/json" };
 const AGGREGATE_QUERY = {
   "group_by_subject": {
