@@ -31,11 +31,11 @@ const MainPage = (_) => {
   const onChange = (e) => setSearchKeyword(e.target.value);
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault();    
     await axios
       .get(searchKeyword ? `/search/${searchKeyword}` : "/quiz")
       .then(({ data }) => {
-        setSubjects(data.quiz.buckets);
+        setSubjects(data.data.buckets);
         setRecord(data.quizRecord);
       });
   };

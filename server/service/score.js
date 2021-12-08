@@ -1,4 +1,4 @@
-const { Op, fn, col, where, literal } = require("sequelize");
+const { Op } = require("sequelize");
 
 const User = require('../models/User');
 const Rank = require("../models/Rank");
@@ -24,13 +24,12 @@ const getRankBySubject = async (subjectId) => {
 
 const getQuizRecordByChapter = async (chapterId) => {
   try {
-    const users = await User.findAll({      
+    const users = await User.findAll({
       attributes: ['quizRecord']
     });
-    
-    return users.some(each => !each.quizRecord[`${chapterId}`])
-      ? undefined
-      : users.map((each) => each.quizRecord[`${chapterId}`]);
+
+    return users.filter(each => each.dataValues.quizRecord[`${chapterId}`])
+      .map(each => each.dataValues.quizRecord[`${chapterId}`]);
   } catch (err) {
     return Promise.reject(err.message);
   }

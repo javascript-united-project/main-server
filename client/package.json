@@ -4,9 +4,10 @@
   "description": "201504009 / 201704036",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.7.0",
+    "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.0.4",
     "@mui/material": "^5.0.4",
-    "@mui/styles": "^5.0.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -19,6 +20,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
+    "start": "react-scripts start",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
