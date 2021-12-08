@@ -4,7 +4,7 @@ const { SYNONYM_RECORDS } = require("../utils/vo");
 const logger = require('../log');
 
 const { SUB_SYSTEM_HOST, ELASTIC_PORT } = process.env;
-const SEARCH_URL = `${SUB_SYSTEM_HOST}:${ELASTIC_PORT}` + "/quiz/_search"
+const SEARCH_URL = `http://${SUB_SYSTEM_HOST}:${ELASTIC_PORT}/quiz/_search`
 const HEADER_QUERY = { "Content-Type": "application/json" };
 const AGGREGATE_QUERY = {
   "group_by_subject": {

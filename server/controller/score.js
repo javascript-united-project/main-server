@@ -49,16 +49,22 @@ const patchMyQuizScoreWithRank = async (req, res) => {
       chapterId,
       sheet[chapterId]
     );
-    const totalPercentage = scoreService.getScorePercentage(user.dataValues);
+    const totalPercentage = scoreService.getScorePercentage(
+      user.dataValues,
+      chapterId.substring(0, 2)
+    );
+    if (typeof totalPercentage !== 'number')
+      throw new Error('invalid data');
+
     const ranks = await scoreService.patchSubjectRank(
       name,
       chapterId.substring(0, 2),
       totalPercentage
-    );    
-    const result = ranks.length 
+    );
+    const result = ranks.length
       ? ranks.filter(each => each instanceof Rank)[0]
       : ranks;
-    
+
     req.session.user.quizRecord = user.dataValues.quizRecord;
     res.json({
       message: `${result.dataValues.subjectId} / ${chapterId} is updated`,
@@ -75,12 +81,7 @@ const getQuizScoreByChapter = async (req, res) => {
   try {
     const { chapterId } = req.params;
 
-    const records = await scoreService.getQuizRecordByChapter(chapterId);
-    const data = records.some(each => !each.quizRecord[`${chapterId}`])
-      ? undefined
-      : records.map((each) => each.quizRecord[`${chapterId}`]);
-
-    res.json({ data });
+    res.json({ data: await scoreService.getQuizRecordByChapter(chapterId) });
   } catch (err) {
     logger.error(err.message);
     res.status(400).json({ message: err.message });

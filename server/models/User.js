@@ -17,7 +17,7 @@ module.exports = class User extends Sequelize.Model {
         allowNull: false
       },
       quizRecord: {
-        type: Sequelize.JSON,
+        type: Sequelize.JSONB,
         allowNull: false,
         defaultValue: {}
       }

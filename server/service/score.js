@@ -24,13 +24,13 @@ const getRankBySubject = async (subjectId) => {
 
 const getQuizRecordByChapter = async (chapterId) => {
   try {
-    return await User.findAll({
-      // ++ Do it function name 
-      // where: { [`quizRecord.${chapterId}`]: { 
-      //   [Op.col]: `quizRecord.${chapterId}` }
-      // },
+    const users = await User.findAll({      
       attributes: ['quizRecord']
     });
+    
+    return users.some(each => !each.quizRecord[`${chapterId}`])
+      ? undefined
+      : users.map((each) => each.quizRecord[`${chapterId}`]);
   } catch (err) {
     return Promise.reject(err.message);
   }
@@ -41,9 +41,9 @@ const patchQuizRecord = async (username, chapterId, chapterSheet) => {
     const user = await User.findOne({
       where: { username },
       ...OPTION_QUERY
-    });        
+    });
     user.dataValues.quizRecord[`${chapterId}`] = chapterSheet;
-    
+
     return await User.update({
       quizRecord: user.dataValues.quizRecord
     }, {
@@ -85,9 +85,8 @@ const patchSubjectRank = async (name, subjectId, totalPercentage) => {
   }
 };
 
-const getScorePercentage = (user) => Object.entries(user.quizRecord)
-  .filter(([chapterId, _]) =>
-    chapterId.substring(0, 2) === chapterId.substring(0, 2)
+const getScorePercentage = (user, subjectId) => Object.entries(user.quizRecord)
+  .filter(([chapterId, _]) => chapterId.substring(0, 2) === subjectId
   )
   .map(([_, chapterRecord]) =>
     chapterRecord
